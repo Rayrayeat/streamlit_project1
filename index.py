@@ -1,10 +1,10 @@
 import streamlit as st
-
 import time
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 import json
+import pandas as pd
 
 # Use a service account.
 app = None
@@ -18,13 +18,14 @@ if db is None :
     db = firestore.client()
 
 records_ref = db.collection('records')
-query = records_ref.limit(20)
+query = records_ref.limit_to_last(20)
 docs = query.get()
-for doc in docs:
-    print(doc.to_dict()['日期'])
 
+datalist = [doc.to_dict() for doc in docs]
+dict_data = pd.DataFrame(datalist)
 
 st.title("光線和距離及時監控")
+st.table(dict_data)
 
 
 
